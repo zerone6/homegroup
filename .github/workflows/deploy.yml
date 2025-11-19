@@ -31,7 +31,7 @@ jobs:
       - name: Deploy on remote server
         uses: appleboy/ssh-action@v0.1.10
         with:
-          host: mirainest.asuscomm.com
+          host: hstarsp.net
           username: zerone6
           key: ${{ secrets.DEPLOY_KEY }}
           script: |
