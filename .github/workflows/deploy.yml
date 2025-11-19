@@ -31,8 +31,8 @@ jobs:
       - name: Deploy on remote server
         uses: appleboy/ssh-action@v0.1.10
         with:
-          host: hstarsp.net
-          username: zerone6
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_KEY }}
           script: |
             cd ~/homegroup
