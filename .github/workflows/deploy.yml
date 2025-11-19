@@ -20,8 +20,8 @@ jobs:
       - name: Copy application to server
         uses: appleboy/scp-action@v0.1.4
         with:
-          host: mirainest.asuscomm.com
-          username: zerone6
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_KEY }}
           source: "."
           target: "~/homegroup/"
