@@ -1,0 +1,61 @@
+name: Deploy Homegroup
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - '**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Copy application to server
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: mirainest.asuscomm.com
+          username: zerone6
+          key: ${{ secrets.DEPLOY_KEY }}
+          source: "."
+          target: "~/homegroup/"
+          overwrite: true
+          rm: true
+
+      - name: Deploy on remote server
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: mirainest.asuscomm.com
+          username: zerone6
+          key: ${{ secrets.DEPLOY_KEY }}
+          script: |
+            cd ~/homegroup
+
+            # Configure Docker DNS (Safety check)
+            if ! sudo grep -q '\"dns\"' /etc/docker/daemon.json 2>/dev/null; then
+              echo '{"dns": ["8.8.8.8", "1.1.1.1"]}' | sudo tee /etc/docker/daemon.json
+              sudo systemctl restart docker
+              sleep 5
+            fi
+
+            # Create network if not exists
+            docker network create web || true
+
+            # Build and Run using Makefile
+            # Note: Ensure make is installed or use docker-compose directly
+            if command -v make &> /dev/null; then
+                make down
+                make up
+            else
+                docker compose -f docker-compose.local.yml down --remove-orphans
+                docker compose -f docker-compose.local.yml up -d --build
+            fi
+
+            # Prune unused images to save space
+            docker image prune -f
