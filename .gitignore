@@ -1,0 +1,8 @@
+# Backups
+*-backup/
+
+# OS specific
+.DS_Store
+
+# Docker
+.env
