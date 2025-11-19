@@ -37,6 +37,11 @@ jobs:
           script: |
             cd ~/homegroup
 
+            # Copy SSL certificates from home directory
+            mkdir -p nginx/ssl
+            cp ~/fullchain.pem nginx/ssl/
+            cp ~/privkey.pem nginx/ssl/
+
             # Configure Docker DNS (Safety check)
             if ! sudo grep -q '\"dns\"' /etc/docker/daemon.json 2>/dev/null; then
               echo '{"dns": ["8.8.8.8", "1.1.1.1"]}' | sudo tee /etc/docker/daemon.json
