@@ -47,6 +47,18 @@ services:
       - auth-db
     restart: unless-stopped
 
+  # Auth Service - Frontend
+  auth-frontend:
+    build:
+      context: ./auth-service/frontend
+      dockerfile: Dockerfile
+    container_name: auth-frontend
+    expose:
+      - "80"
+    networks:
+      - web
+    restart: unless-stopped
+
   # Auth Service - Database
   auth-db:
     image: postgres:16-alpine
