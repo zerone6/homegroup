@@ -1,0 +1,33 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "🚀 Start All Services",
+      "type": "shell",
+      "command": "docker compose -f docker-compose.local.yml up -d && echo '' && echo '✅ All services started!' && echo '' && docker compose -f docker-compose.local.yml ps",
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": false
+      }
+    },
+    {
+      "label": "⏹️ Stop All Services",
+      "type": "shell",
+      "command": "docker compose -f docker-compose.local.yml down && echo '' && echo '✅ All services stopped and removed'",
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": false
+      }
+    }
+  ]
+}
