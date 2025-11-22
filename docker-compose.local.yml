@@ -17,6 +17,50 @@ services:
       - main-page
       - realestate-frontend
       - realestate-backend
+      - auth-service
+      - auth-db
+
+  # Auth Service - Backend
+  auth-service:
+    build:
+      context: ./auth-service/backend
+      dockerfile: Dockerfile
+    container_name: auth-service
+    expose:
+      - "3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DATABASE_URL=postgresql://auth_user:${AUTH_DB_PASSWORD}@auth-db:5432/auth
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - GOOGLE_CALLBACK_URL=https://hstarsp.net/auth/google/callback
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRES_IN=7d
+      - SESSION_SECRET=${SESSION_SECRET}
+      - INITIAL_ADMIN_EMAIL=${INITIAL_ADMIN_EMAIL}
+      - FRONTEND_URL=https://hstarsp.net
+      - ALLOWED_ORIGINS=https://hstarsp.net,https://www.hstarsp.net
+    networks:
+      - web
+    depends_on:
+      - auth-db
+    restart: unless-stopped
+
+  # Auth Service - Database
+  auth-db:
+    image: postgres:16-alpine
+    container_name: auth-db
+    environment:
+      - POSTGRES_DB=auth
+      - POSTGRES_USER=auth_user
+      - POSTGRES_PASSWORD=${AUTH_DB_PASSWORD}
+    volumes:
+      - auth-db-data:/var/lib/postgresql/data
+      - ./auth-service/database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    networks:
+      - web
+    restart: unless-stopped
 
   # 메인 페이지 (가족정보 공유사이트)
   main-page:
@@ -86,3 +130,6 @@ services:
 networks:
   web:
     driver: bridge
+
+volumes:
+  auth-db-data:
