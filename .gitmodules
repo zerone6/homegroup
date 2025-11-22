@@ -10,3 +10,7 @@
 	path = landing-page
 	url = https://github.com/zerone6/indexpage.git
 	branch = dev
+[submodule "auth-service"]
+	path = auth-service
+	url = https://github.com/zerone6/auth-service.git
+	branch = main
